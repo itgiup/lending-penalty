@@ -1,0 +1,14 @@
+{
+  "name": "lending-penalty-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Hono backend for lending penalty calculator",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,75 @@
+.results-display {
+  max-width: 1200px;
+  margin: 24px auto 0;
+}
+
+.summary-card,
+.payment-card,
+.details-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+  border: none;
+}
+
+.summary-card ::deep(.ant-card-head),
+.payment-card ::deep(.ant-card-head),
+.details-card ::deep(.ant-card-head) {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px 12px 0 0;
+  border-bottom: 2px solid #e8eef7;
+}
+
+.summary-card ::deep(.ant-card-head-title),
+.payment-card ::deep(.ant-card-head-title),
+.details-card ::deep(.ant-card-head-title) {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.summary-card ::deep(.ant-statistic-title),
+.payment-card ::deep(.ant-statistic-title) {
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+}
+
+.summary-card ::deep(.ant-statistic-content),
+.payment-card ::deep(.ant-statistic-content) {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.summary-card ::deep(.ant-progress-outer) {
+  padding: 4px 0;
+}
+
+.payment-card ::deep(.ant-progress-text) {
+  font-weight: 600;
+}
+
+.details-card {
+  background: #fafafa;
+}
+
+.details-card ::deep(.ant-card-body) {
+  padding: 16px;
+}
+
+.details-card p {
+  margin: 8px 0;
+  line-height: 1.8;
+  color: #262626;
+}
+
+@media (max-width: 768px) {
+  .results-display {
+    margin: 16px 0;
+    padding: 0 12px;
+  }
+
+  .summary-card ::deep(.ant-statistic-content),
+  .payment-card ::deep(.ant-statistic-content) {
+    font-size: 18px;
+  }
+}

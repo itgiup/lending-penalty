@@ -1,0 +1,185 @@
+================================================================================
+🏦 MÁY TÍNH LÃI/PHẠT CHO VAY - GETTING STARTED
+================================================================================
+
+✅ PROJECT COMPLETED - TẤT CẢ FILE SẴN SÀNG
+
+📂 Vị trí: /home/u/Documents/lending-penalty/
+
+================================================================================
+🚀 BƯỚC 1: CHẠY NGAY (Development)
+================================================================================
+
+cd /home/u/Documents/lending-penalty
+npm install
+npm run dev
+
+→ Mở browser: http://localhost:5173/
+
+================================================================================
+📖 TÀI LIỆU
+================================================================================
+
+1. QUICKSTART.md - Bắt đầu nhanh (5 phút)
+2. README.md - Tài liệu đầy đủ
+3. DEPLOYMENT.md - Hướng dẫn triển khai production
+4. PROJECT_SUMMARY.md - Tóm tắt chi tiết
+5. worker/README.md - API Backend documentation
+
+================================================================================
+📊 TÍNH NĂNG CHÍNH
+================================================================================
+
+✅ Tính lãi kép: Gốc × (1 + rate)^n
+✅ Phạt động: Tính lại mỗi 12 tháng
+✅ Tiền phạt → Khoản vay mới (tính tiếp phạt)
+✅ Thanh toán từng phần
+✅ Hiệu ứng animation mượt mà
+✅ Responsive design (Mobile/Tablet/Desktop)
+✅ Backend API sẵn sàng (Hono + Cloudflare Workers)
+
+================================================================================
+🛠️ CÔNG NGHỆ
+================================================================================
+
+Frontend:
+- React 18 + Vite
+- Ant Design 6
+- Framer Motion (animation)
+- dayjs (date handling)
+
+Backend:
+- Hono (web framework)
+- Cloudflare Workers
+- Cloudflare D1 (database)
+
+================================================================================
+📋 EXAMPLE - VÍ DỤ TÍNH TOÁN
+================================================================================
+
+Đầu vào:
+  Vay: 1,000,000 VND
+  Ngày: 01/01/2022
+  Lãi: 20%/năm
+  Kỳ hạn: 12 tháng
+  Phạt: 40%/năm
+  Hôm nay: 28/05/2026
+
+Kết quả:
+  Gốc: 1,000,000 VND
+  Lãi: ~2,288,000 VND
+  Phạt (4 kỳ): ~9,000,000+ VND
+  Tổng nợ: ~12,288,000+ VND
+
+================================================================================
+📁 CẤU TRÚC PROJECT
+================================================================================
+
+lending-penalty/
+├── src/
+│   ├── components/
+│   │   ├── LoanCalculator.jsx (Form nhập liệu)
+│   │   └── ResultsDisplay.jsx (Hiển thị kết quả)
+│   ├── utils/
+│   │   └── calculations.js (Hàm tính toán)
+│   └── App.jsx
+├── worker/ (Backend - Hono)
+│   ├── src/
+│   │   └── index.ts (API)
+│   └── wrangler.toml
+├── dist/ (Build output)
+├── README.md
+├── QUICKSTART.md
+├── DEPLOYMENT.md
+├── PROJECT_SUMMARY.md
+├── examples.js (Test cases)
+└── package.json
+
+================================================================================
+🧪 TEST EXAMPLES
+================================================================================
+
+npm run examples
+
+Chạy các test case demo với dữ liệu mẫu
+
+================================================================================
+🔨 BUILD & DEPLOY
+================================================================================
+
+Production Build:
+  npm run build
+  npm run preview
+
+Deploy tới Cloudflare:
+  1. Frontend: Cloudflare Pages
+  2. Backend: Cloudflare Workers
+  
+Xem DEPLOYMENT.md để chi tiết
+
+================================================================================
+🎯 CHECKLIST ĐẦU TIÊN
+================================================================================
+
+[ ] npm install
+[ ] npm run dev
+[ ] Truy cập http://localhost:5173/
+[ ] Nhập test data
+[ ] Nhấn "Tính Toán"
+[ ] Xem kết quả
+[ ] Scroll xem lịch sử phạt
+[ ] Đọc tài liệu (README.md)
+[ ] Triển khai lên Cloudflare (DEPLOYMENT.md)
+
+================================================================================
+💡 TIPS
+================================================================================
+
+1. Sử dụng số mặc định để test nhanh
+2. Ngày định dạng: DD/MM/YYYY (01/01/2022)
+3. Lãi suất: Nhập % (20, không phải 0.2)
+4. Kỳ hạn: Nhập tháng (12, không phải 1)
+5. Xem details: Scroll xuống để xem bảng phạt
+
+================================================================================
+📞 HỖRỢ
+================================================================================
+
+Tài liệu:
+- README.md - Tài liệu đầy đủ
+- QUICKSTART.md - Hướng dẫn nhanh
+- DEPLOYMENT.md - Production
+- examples.js - Test cases
+
+Links:
+- React: https://react.dev
+- Ant Design: https://ant.design
+- Hono: https://hono.dev
+- Cloudflare: https://developers.cloudflare.com
+
+================================================================================
+✨ LƯU Ý
+================================================================================
+
+✓ 12 tháng = 365 ngày
+✓ Phạt tính lại mỗi 12 tháng
+✓ Lãi/phạt theo công thức kép
+✓ Tất cả số tiền bằng VND
+✓ Hỗ trợ thanh toán từng phần
+
+================================================================================
+🎉 SẴN SÀNG!
+
+1. Chạy: npm run dev
+2. Mở: http://localhost:5173/
+3. Test: Nhập dữ liệu → Tính Toán
+4. Đọc: Tài liệu (README.md)
+5. Deploy: Xem DEPLOYMENT.md
+
+Chúc mừng! 🚀
+
+================================================================================
+Version: 1.0.0
+Status: ✅ Ready for Production
+Last Updated: 28/05/2026
+================================================================================
