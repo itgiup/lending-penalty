@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Table, Button, Space, Tag, Typography, Divider, Progress } from 'antd';
+import { Card, Row, Col, Statistic, Table, Button, Space, Tag, Typography, Divider, Progress, message } from 'antd';
 import { motion } from 'framer-motion';
 import { ArrowLeftOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import { loansAPI, paymentsAPI } from '../api/client';
+import { exportPaymentsToExcel } from '../utils/export';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -79,6 +80,15 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
     }
   ];
 
+  const handleExportPayments = async () => {
+    try {
+      await exportPaymentsToExcel(loanId, loan.borrower_name, paymentsAPI);
+      message.success('Xuất file thành công!');
+    } catch (error) {
+      message.error('Xuất file thất bại: ' + error.message);
+    }
+  };
+
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
   const paymentProgress = calculation.totalDebt > 0 
     ? Math.min(100, (totalPaid / calculation.totalDebt) * 100)
@@ -111,7 +121,13 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
               >
                 Ghi Nhận Thanh Toán
               </Button>
-              <Button icon={<DownloadOutlined />}>Xuất Báo Cáo</Button>
+              <Button 
+                icon={<DownloadOutlined />}
+                onClick={handleExportPayments}
+                disabled={payments.length === 0}
+              >
+                Xuất Lịch Sử Thanh Toán
+              </Button>
             </Space>
           </Col>
         </Row>

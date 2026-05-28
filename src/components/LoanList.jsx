@@ -1,15 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Table, Tag, Button, Space, Card, Typography, Empty, Spin } from 'antd';
 import { motion } from 'framer-motion';
-import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { loansAPI } from '../api/client';
+import { exportLoansToExcel } from '../utils/export';
 import dayjs from 'dayjs';
+import SearchFilter from './SearchFilter';
 
 const { Title } = Typography;
 
 const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
   const [loans, setLoans] = useState([]);
+  const [filteredLoans, setFilteredLoans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState('');
+  const [statusFilter, setStatusFilter] = useState(null);
+
+  useEffect(() => {
+    fetchLoans();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [loans, searchText, statusFilter]);
 
   const fetchLoans = async () => {
     try {
@@ -23,9 +36,39 @@ const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
     }
   };
 
-  useEffect(() => {
-    fetchLoans();
-  }, []);
+  const applyFilters = () => {
+    let filtered = [...loans];
+
+    // Apply search filter
+    if (searchText) {
+      filtered = filtered.filter(loan => 
+        loan.borrower_name.toLowerCase().includes(searchText.toLowerCase()) ||
+        (loan.borrower_phone && loan.borrower_phone.includes(searchText))
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter) {
+      filtered = filtered.filter(loan => loan.status === statusFilter);
+    }
+
+    setFilteredLoans(filtered);
+  };
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
+
+  const handleFilter = (type, value) => {
+    if (type === 'status') {
+      setStatusFilter(value);
+    }
+  };
+
+  const handleReset = () => {
+    setSearchText('');
+    setStatusFilter(null);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -33,6 +76,14 @@ const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
       setLoans(loans.filter(loan => loan.id !== id));
     } catch (error) {
       console.error('Failed to delete loan:', error);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      await exportLoansToExcel(loans);
+    } catch (error) {
+      console.error('Export failed:', error);
     }
   };
 
@@ -155,45 +206,63 @@ const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
           marginBottom: '24px'
         }}>
           <Title level={3} style={{ margin: 0 }}>💰 Danh Sách Khoản Nợ</Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            size="large"
-            onClick={onAddLoan}
-            style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              border: 'none'
-            }}
-          >
-            Thêm Khoản Nợ Mới
-          </Button>
-        </div>
-
-        {loans.length === 0 ? (
-          <Empty
-            description="Chưa có khoản nợ nào"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          >
+          <Space>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+              disabled={loans.length === 0}
+            >
+              Xuất Excel
+            </Button>
             <Button
               type="primary"
+              icon={<PlusOutlined />}
+              size="large"
               onClick={onAddLoan}
               style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 border: 'none'
               }}
             >
-              Tạo Khoản Nợ Đầu Tiên
+              Thêm Khoản Nợ Mới
             </Button>
+          </Space>
+        </div>
+
+        {/* Search and Filter */}
+        <SearchFilter
+          onSearch={handleSearch}
+          onFilter={handleFilter}
+          onReset={handleReset}
+        />
+
+        {filteredLoans.length === 0 ? (
+          <Empty
+            description={loans.length === 0 ? "Chưa có khoản nợ nào" : "Không tìm thấy kết quả"}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          >
+            {loans.length === 0 && (
+              <Button
+                type="primary"
+                onClick={onAddLoan}
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  border: 'none'
+                }}
+              >
+                Tạo Khoản Nợ Đầu Tiên
+              </Button>
+            )}
           </Empty>
         ) : (
           <Table
             columns={columns}
-            dataSource={loans}
+            dataSource={filteredLoans}
             rowKey="id"
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              showTotal: (total) => `Tổng ${total} khoản nợ`
+              showTotal: (total) => `Hiển thị ${total} khoản nợ`
             }}
             scroll={{ x: true }}
           />

@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Card, Typography, Button, Space } from 'antd';
+import { Card, Typography, Button, Space, Tabs } from 'antd';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogoutOutlined, HomeOutlined } from '@ant-design/icons';
+import { LogoutOutlined, HomeOutlined, DashboardOutlined, BarChartOutlined } from '@ant-design/icons';
 import LoanList from '../components/LoanList';
 import LoanForm from '../components/LoanForm';
 import LoanDetail from '../components/LoanDetail';
 import PaymentForm from '../components/PaymentForm';
+import DashboardStats from '../components/DashboardStats';
+import DebtChart from '../components/DebtChart';
 
 const { Title } = Typography;
 
@@ -17,6 +19,7 @@ const Dashboard = () => {
   
   const [view, setView] = useState('list'); // 'list', 'form', 'detail', 'payment'
   const [selectedLoan, setSelectedLoan] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'analytics'
 
   const handleLogout = () => {
     logout();
@@ -51,6 +54,38 @@ const Dashboard = () => {
   const handlePaymentSuccess = () => {
     setView('detail');
   };
+
+  const tabItems = [
+    {
+      key: 'overview',
+      label: (
+        <span>
+          <DashboardOutlined />
+          Tổng Quan
+        </span>
+      ),
+      children: (
+        <>
+          <DashboardStats />
+          <LoanList
+            onAddLoan={handleAddLoan}
+            onViewLoan={handleViewLoan}
+            onEditLoan={handleEditLoan}
+          />
+        </>
+      )
+    },
+    {
+      key: 'analytics',
+      label: (
+        <span>
+          <BarChartOutlined />
+          Biểu Đồ Phân Tích
+        </span>
+      ),
+      children: <DebtChart />
+    }
+  ];
 
   return (
     <div style={{
@@ -101,13 +136,14 @@ const Dashboard = () => {
           </Space>
         </Card>
 
-        {/* Main Content */}
+        {/* Main Content with Tabs */}
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {view === 'list' && (
-            <LoanList
-              onAddLoan={handleAddLoan}
-              onViewLoan={handleViewLoan}
-              onEditLoan={handleEditLoan}
+            <Tabs
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              items={tabItems}
+              size="large"
             />
           )}
 
