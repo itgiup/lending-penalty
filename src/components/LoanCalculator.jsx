@@ -15,9 +15,12 @@ import {
 import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { calculateLoanStatus } from '../utils/calculations';
 import ResultsDisplay from './ResultsDisplay';
+import { UserOutlined, DashboardOutlined } from '@ant-design/icons';
 import './LoanCalculator.css';
 
 const { Option } = Select;
@@ -25,6 +28,7 @@ const { Option } = Select;
 const LoanCalculator = () => {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, user } = useAuth();
   const [form] = Form.useForm();
   const [loanData, setLoanData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -75,6 +79,20 @@ const LoanCalculator = () => {
           </Select>
 
           <Space>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button type="primary" icon={<DashboardOutlined />} size="large">
+                  {user?.name || 'Dashboard'}
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button icon={<UserOutlined />} size="large">
+                  Đăng Nhập
+                </Button>
+              </Link>
+            )}
+
             <Switch
               checked={theme === 'dark'}
               onChange={toggleTheme}
