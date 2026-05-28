@@ -1,19 +1,55 @@
-import React from 'react';
+import { useState } from 'react';
 import { Card, Typography, Button, Space } from 'antd';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogoutOutlined, HomeOutlined } from '@ant-design/icons';
+import LoanList from '../components/LoanList';
+import LoanForm from '../components/LoanForm';
+import LoanDetail from '../components/LoanDetail';
+import PaymentForm from '../components/PaymentForm';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+  const [view, setView] = useState('list'); // 'list', 'form', 'detail', 'payment'
+  const [selectedLoan, setSelectedLoan] = useState(null);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleAddLoan = () => {
+    setSelectedLoan(null);
+    setView('form');
+  };
+
+  const handleEditLoan = (loan) => {
+    setSelectedLoan(loan);
+    setView('form');
+  };
+
+  const handleViewLoan = (loan) => {
+    setSelectedLoan(loan);
+    setView('detail');
+  };
+
+  const handleAddPayment = (loanId) => {
+    setSelectedLoan({ id: loanId });
+    setView('payment');
+  };
+
+  const handleFormSuccess = () => {
+    setView('list');
+    setSelectedLoan(null);
+  };
+
+  const handlePaymentSuccess = () => {
+    setView('detail');
   };
 
   return (
@@ -27,59 +63,78 @@ const Dashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* Header */}
         <Card
           bordered={false}
           style={{
-            maxWidth: '800px',
-            margin: '0 auto',
+            maxWidth: '1200px',
+            margin: '0 auto 24px',
             borderRadius: '12px',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)'
           }}
         >
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <Title level={2}>🎉 Chào mừng, {user?.name || 'User'}!</Title>
-            <Text type="secondary">
-              Đây là trang quản lý khoản nợ của bạn
-            </Text>
-          </div>
-
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '48px 0',
-            background: '#f5f5f5',
-            borderRadius: '8px',
-            marginBottom: '24px'
-          }}>
-            <Title level={4} style={{ color: '#999' }}>
-              🚧 Đang phát triển...
-            </Title>
-            <Text type="secondary">
-              Tính năng quản lý khoản nợ sẽ sớm ra mắt!
-            </Text>
-          </div>
-
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Button
-              type="primary"
-              icon={<HomeOutlined />}
-              block
-              size="large"
-              onClick={() => navigate('/')}
-            >
-              Quay lại trang tính toán
-            </Button>
-
-            <Button
-              danger
-              icon={<LogoutOutlined />}
-              block
-              size="large"
-              onClick={handleLogout}
-            >
-              Đăng xuất
-            </Button>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}>
+              <Title level={2} style={{ margin: 0 }}>
+                🎉 Chào mừng, {user?.name || 'User'}!
+              </Title>
+              <Space>
+                <Button
+                  icon={<HomeOutlined />}
+                  onClick={() => navigate('/')}
+                >
+                  Trang tính toán
+                </Button>
+                <Button
+                  danger
+                  icon={<LogoutOutlined />}
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </Button>
+              </Space>
+            </div>
           </Space>
         </Card>
+
+        {/* Main Content */}
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          {view === 'list' && (
+            <LoanList
+              onAddLoan={handleAddLoan}
+              onViewLoan={handleViewLoan}
+              onEditLoan={handleEditLoan}
+            />
+          )}
+
+          {view === 'form' && (
+            <LoanForm
+              loan={selectedLoan}
+              onSuccess={handleFormSuccess}
+              onCancel={() => setView('list')}
+            />
+          )}
+
+          {view === 'detail' && selectedLoan && (
+            <LoanDetail
+              loanId={selectedLoan.id}
+              onBack={() => setView('list')}
+              onAddPayment={handleAddPayment}
+            />
+          )}
+
+          {view === 'payment' && selectedLoan && (
+            <PaymentForm
+              loanId={selectedLoan.id}
+              onSuccess={handlePaymentSuccess}
+              onCancel={() => setView('detail')}
+            />
+          )}
+        </div>
       </motion.div>
     </div>
   );
