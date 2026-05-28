@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Form,
-  Input,
   Button,
   Card,
   Row,
   Col,
   DatePicker,
   Space,
-  Statistic,
-  Divider,
-  Table,
-  Alert,
   InputNumber,
-  Tooltip
+  Tooltip,
+  Select,
+  Switch
 } from 'antd';
 import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
-import { calculateLoanStatus, predictFutureDebt } from '../utils/calculations';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../context/ThemeContext';
+import { calculateLoanStatus } from '../utils/calculations';
 import ResultsDisplay from './ResultsDisplay';
 import './LoanCalculator.css';
 
+const { Option } = Select;
+
 const LoanCalculator = () => {
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
   const [form] = Form.useForm();
   const [loanData, setLoanData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,15 +47,51 @@ const LoanCalculator = () => {
     }, 500);
   };
 
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dayjs.locale(lang);
+  };
+
   return (
     <div className="loan-calculator">
+      {/* Header với Language Switcher và Theme Toggle */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="app-header"
+      >
+        <div className="header-controls">
+          <Select
+            value={i18n.language}
+            onChange={changeLanguage}
+            style={{ width: 140 }}
+            size="large"
+          >
+            <Option value="vi">🇻🇳 Tiếng Việt</Option>
+            <Option value="en">🇬🇧 English</Option>
+            <Option value="zh">🇨🇳 中文</Option>
+            <Option value="ru">🇷🇺 Русский</Option>
+          </Select>
+
+          <Space>
+            <Switch
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+              checkedChildren="🌙 Dark"
+              unCheckedChildren="☀️ Light"
+            />
+          </Space>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
       >
         <Card
-          title="🏦 Máy Tính Lãi/Phạt Cho Vay"
+          title={t('calculator.title')}
           bordered={false}
           className="calculator-card"
         >
@@ -72,34 +111,35 @@ const LoanCalculator = () => {
             <Row gutter={16}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="💰 Số Tiền Vay"
+                  label={t('calculator.principal')}
                   name="principal"
-                  rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
+                  rules={[{ required: true, message: t('common.error') }]}
                 >
                   <InputNumber
                     formatter={(value) =>
-                      `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      `${t('common.currency')} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     }
-                    parser={(value) => value.replace(/\₫\s?|(,*)/g, '')}
+                    parser={(value) => value.replace(/[₫$¥₽]\s?|(,*)/g, '')}
                     style={{ width: '100%' }}
+                    changeOnWheel
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="📅 Ngày Vay"
+                  label={t('calculator.loanDate')}
                   name="startDate"
-                  rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+                  rules={[{ required: true, message: t('common.error') }]}
                 >
                   <DatePicker style={{ width: '100%' }} />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Tooltip title="Lãi suất hàng năm">
+                <Tooltip title={t('calculator.interestRate')}>
                   <Form.Item
-                    label="📈 Lãi Suất (/năm)"
+                    label={t('calculator.interestRate')}
                     name="interestRate"
                     rules={[{ required: true }]}
                   >
@@ -108,6 +148,7 @@ const LoanCalculator = () => {
                       max={100}
                       step={0.1}
                       addonAfter="%"
+                      changeOnWheel
                     />
                   </Form.Item>
                 </Tooltip>
@@ -115,7 +156,7 @@ const LoanCalculator = () => {
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="⏰ Kỳ Hạn"
+                  label={t('calculator.termMonths')}
                   name="termMonths"
                   rules={[{ required: true }]}
                 >
@@ -123,15 +164,16 @@ const LoanCalculator = () => {
                     min={1}
                     max={360}
                     step={1}
-                    addonAfter="tháng"
+                    addonAfter={t('calculator.termMonths')}
+                    changeOnWheel
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Tooltip title="Phạt được tính nếu chậm trả sau kỳ hạn">
+                <Tooltip title={t('calculator.penaltyRate')}>
                   <Form.Item
-                    label="⚠️ Phạt Suất (/năm)"
+                    label={t('calculator.penaltyRate')}
                     name="penaltyRate"
                     rules={[{ required: true }]}
                   >
@@ -140,6 +182,7 @@ const LoanCalculator = () => {
                       max={100}
                       step={0.1}
                       addonAfter="%"
+                      changeOnWheel
                     />
                   </Form.Item>
                 </Tooltip>
@@ -147,16 +190,17 @@ const LoanCalculator = () => {
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="✅ Đã Thanh Toán"
+                  label={t('calculator.paidAmount')}
                   name="paidAmount"
                 >
                   <InputNumber
                     min={0}
                     formatter={(value) =>
-                      `₫ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      `${t('common.currency')} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                     }
-                    parser={(value) => value.replace(/\₫\s?|(,*)/g, '')}
+                    parser={(value) => value.replace(/[₫$¥₽]\s?|(,*)/g, '')}
                     style={{ width: '100%' }}
+                    changeOnWheel
                   />
                 </Form.Item>
               </Col>
@@ -170,7 +214,7 @@ const LoanCalculator = () => {
                 size="large"
                 style={{ width: '100%' }}
               >
-                🔍 Tính Toán
+                {t('calculator.calculate')}
               </Button>
             </Form.Item>
           </Form>

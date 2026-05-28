@@ -1,14 +1,16 @@
-import React from 'react';
 import { Card, Row, Col, Statistic, Divider, Table, Alert, Tag, Progress } from 'antd';
 import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import './ResultsDisplay.css';
 
-const formatCurrency = (value) => {
-  return `₫ ${Math.round(value).toLocaleString('vi-VN')}`;
+const formatCurrency = (value, currency) => {
+  return `${currency} ${Math.round(value).toLocaleString('vi-VN')}`;
 };
 
 const ResultsDisplay = ({ loan }) => {
+  const { t } = useTranslation();
+  
   const {
     principal,
     interest,
@@ -17,11 +19,12 @@ const ResultsDisplay = ({ loan }) => {
     paidAmount,
     remainingDebt,
     dueDate,
-    currentDate,
     isOverdue,
     penaltyLoans,
     details
   } = loan;
+
+  const currency = t('common.currency');
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -45,29 +48,29 @@ const ResultsDisplay = ({ loan }) => {
 
   const penaltyColumns = [
     {
-      title: 'Kỳ',
+      title: t('results.period'),
       dataIndex: 'period',
       key: 'period',
       width: 60,
       render: (text) => <strong>{text}</strong>
     },
     {
-      title: 'Gốc/Nợ',
+      title: t('results.base'),
       dataIndex: 'base',
       key: 'base',
-      render: (value) => formatCurrency(value)
+      render: (value) => formatCurrency(value, currency)
     },
     {
-      title: 'Tiền Phạt',
+      title: t('results.penaltyAmount'),
       dataIndex: 'penalty',
       key: 'penalty',
-      render: (value) => <span style={{ color: '#ff4d4f' }}>{formatCurrency(value)}</span>
+      render: (value) => <span style={{ color: '#ff4d4f' }}>{formatCurrency(value, currency)}</span>
     },
     {
-      title: 'Tổng Cộng',
+      title: t('results.totalAmount'),
       dataIndex: 'total',
       key: 'total',
-      render: (value) => <strong>{formatCurrency(value)}</strong>
+      render: (value) => <strong>{formatCurrency(value, currency)}</strong>
     }
   ];
 
@@ -83,8 +86,8 @@ const ResultsDisplay = ({ loan }) => {
       {isOverdue && (
         <motion.div variants={itemVariants}>
           <Alert
-            message="⚠️ QUÁ HẠN TRẢ NỢ"
-            description={`Hạn thanh toán: ${dayjs(dueDate).format('DD/MM/YYYY')}`}
+            message={`⚠️ ${t('results.overdue')}`}
+            description={`${t('results.dueDate')}: ${dayjs(dueDate).format('DD/MM/YYYY')}`}
             type="error"
             showIcon
             style={{ marginBottom: 16 }}
@@ -94,40 +97,40 @@ const ResultsDisplay = ({ loan }) => {
 
       <motion.div variants={itemVariants}>
         <Card
-          title="📊 Tóm Tắt Khoản Vay"
+          title={t('results.summary')}
           bordered={false}
           className="summary-card"
         >
           <Row gutter={16}>
             <Col xs={24} sm={12} md={6}>
               <Statistic
-                title="💵 Gốc Vay"
+                title={t('results.principal')}
                 value={principal}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: '#1890ff' }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Statistic
-                title="📈 Lãi Tích Lũy"
+                title={t('results.interest')}
                 value={interest}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: '#faad14' }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Statistic
-                title={isOverdue ? '🔴 Tiền Phạt' : '⚫ Tiền Phạt'}
+                title={isOverdue ? t('results.penalty') : '⚫ ' + t('results.penalty')}
                 value={penalty}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: penalty > 0 ? '#ff4d4f' : '#95de64' }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Statistic
-                title="💰 Tổng Nợ"
+                title={t('results.totalDebt')}
                 value={totalDebt}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: '#f5222d', fontSize: '24px' }}
               />
             </Col>
@@ -137,30 +140,30 @@ const ResultsDisplay = ({ loan }) => {
 
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
-          title="💳 Tình Hình Thanh Toán"
+          title={t('results.paymentProgress')}
           bordered={false}
           className="payment-card"
         >
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8}>
               <Statistic
-                title="✅ Đã Thanh Toán"
+                title={t('results.paidAmount')}
                 value={paidAmount}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: '#52c41a' }}
               />
             </Col>
             <Col xs={24} sm={12} md={8}>
               <Statistic
-                title="❌ Còn Nợ"
+                title={t('results.remainingDebt')}
                 value={remainingDebt}
-                formatter={(value) => formatCurrency(value)}
+                formatter={(value) => formatCurrency(value, currency)}
                 valueStyle={{ color: remainingDebt > 0 ? '#ff4d4f' : '#52c41a' }}
               />
             </Col>
             <Col xs={24} sm={12} md={8}>
               <Statistic
-                title="📉 Tỷ Lệ Thanh Toán"
+                title={t('results.paymentProgress')}
                 value={progressPercent}
                 suffix="%"
                 valueStyle={{ color: progressPercent === 100 ? '#52c41a' : '#faad14' }}
@@ -177,33 +180,33 @@ const ResultsDisplay = ({ loan }) => {
 
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
-          title="📅 Thông Tin Kỳ Hạn"
+          title={t('results.termInfo')}
           bordered={false}
         >
           <Row gutter={16}>
             <Col xs={24} sm={12}>
               <div style={{ marginBottom: 8 }}>
-                <strong>📍 Ngày Vay:</strong> {dayjs(details.startDate).format('DD/MM/YYYY')}
+                <strong>{t('results.loanDate')}:</strong> {dayjs(details.startDate).format('DD/MM/YYYY')}
               </div>
               <div>
-                <strong>⏳ Kỳ Hạn:</strong> {details.termMonths} tháng
+                <strong>⏳ {t('calculator.termMonths')}:</strong> {details.termMonths} {t('calculator.termMonths')}
               </div>
             </Col>
             <Col xs={24} sm={12}>
               <div style={{ marginBottom: 8 }}>
-                <strong>📌 Hạn Chót:</strong> {dayjs(dueDate).format('DD/MM/YYYY')}
+                <strong>{t('results.dueDate')}:</strong> {dayjs(dueDate).format('DD/MM/YYYY')}
                 {isOverdue ? (
                   <Tag color="red" style={{ marginLeft: 8 }}>
-                    Quá hạn
+                    {t('results.overdue')}
                   </Tag>
                 ) : (
                   <Tag color="green" style={{ marginLeft: 8 }}>
-                    Chưa đến hạn
+                    {t('results.notOverdue')}
                   </Tag>
                 )}
               </div>
               <div>
-                <strong>📊 Lãi suất:</strong> {(details.interestRate * 100).toFixed(1)}%/năm
+                <strong>📊 {t('calculator.interestRate')}:</strong> {(details.interestRate * 100).toFixed(1)}%/năm
               </div>
             </Col>
           </Row>
@@ -213,11 +216,12 @@ const ResultsDisplay = ({ loan }) => {
       {penaltyLoans.length > 0 && (
         <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
           <Card
-            title={`🔴 Lịch Sử Phạt (${penaltyLoans.length} kỳ)`}
+            title={`${t('results.penaltyHistory')} (${penaltyLoans.length} kỳ)`}
             bordered={false}
           >
             <Alert
-              message="Các kỳ phạt đã được tính và được cộng vào nợ"
+              message={t('results.penaltyHistory')}
+              description="Các kỳ phạt đã được tính và được cộng vào nợ"
               type="warning"
               showIcon
               style={{ marginBottom: 16 }}
@@ -237,23 +241,23 @@ const ResultsDisplay = ({ loan }) => {
 
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
-          title="🎯 Chi Tiết Tính Toán"
+          title={t('results.details')}
           bordered={false}
           className="details-card"
         >
           <div style={{ fontFamily: 'monospace', fontSize: '12px' }}>
             <p>
-              <strong>Công thức:</strong> Nợ = Gốc × (1 + suất_lãi)^n + Phạt
+              <strong>{t('results.details')}:</strong> {t('app.subtitle')}
             </p>
             <p>
-              <strong>Trong đó:</strong>
+              <strong>{t('common.success')}:</strong>
               <br />
-              - Gốc: ₫ {Math.round(principal).toLocaleString('vi-VN')}
+              - {t('results.principal')}: {formatCurrency(principal, currency)}
               <br />
-              - Lãi suất: {(details.interestRate * 100).toFixed(2)}%/năm
+              - {t('calculator.interestRate')}: {(details.interestRate * 100).toFixed(2)}%/năm
               <br />
-              - Phạt suất: {(details.penaltyRate * 100).toFixed(2)}%/năm
-              <br />- Thời gian: {details.termMonths} tháng (từ {dayjs(details.startDate).format('DD/MM/YYYY')})
+              - {t('calculator.penaltyRate')}: {(details.penaltyRate * 100).toFixed(2)}%/năm
+              <br />- {t('calculator.termMonths')}: {details.termMonths} {t('calculator.termMonths')} ({t('results.loanDate')} {dayjs(details.startDate).format('DD/MM/YYYY')})
             </p>
           </div>
         </Card>
