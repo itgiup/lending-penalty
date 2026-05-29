@@ -116,7 +116,7 @@ const ResultsDisplay: FC<ResultsDisplayProps> = ({ loan }) => {
       {isOverdue && (
         <motion.div variants={itemVariants}>
           <Alert
-            message={`⚠️ ${t('results.overdue')}`}
+            title={`⚠️ ${t('results.overdue')}`}
             description={`${t('results.dueDate')}: ${dayjs(dueDate).format('DD/MM/YYYY')}`}
             type="error"
             showIcon
@@ -260,7 +260,7 @@ const ResultsDisplay: FC<ResultsDisplayProps> = ({ loan }) => {
             title={`${t('results.penaltyHistory')} (${penaltyLoans.length} kỳ)`}
           >
             <Alert
-              message={t('results.penaltyHistory')}
+              title={t('results.penaltyHistory')}
               description="Các kỳ phạt đã được tính và được cộng vào nợ"
               type="warning"
               showIcon

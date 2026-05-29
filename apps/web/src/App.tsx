@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,6 +26,9 @@ const localeMap: Record<string, any> = {
   zh: zhCN,
   ru: ruRU
 };
+
+// Get Google Client ID from environment variable or use empty string for demo mode
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const AppContent: FC = () => {
   const { i18n } = useTranslation();
@@ -68,11 +72,13 @@ const AppContent: FC = () => {
 
 const App: FC = () => {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 };
 

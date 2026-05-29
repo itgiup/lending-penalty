@@ -21,7 +21,7 @@ const Register: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | 'facebook' | null>(null);
   const [error, setError] = useState<string>('');
-  
+
   const { register, loginWithFacebook } = useAuth();
   const { login: googleLogin } = useGoogleOAuth(); // Real Google OAuth hook
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const Register: FC = () => {
     setError('');
 
     const result = await loginWithFacebook();
-    
+
     if (result.success) {
       navigate('/dashboard', { replace: true });
     } else {
@@ -108,11 +108,12 @@ const Register: FC = () => {
 
           {error && (
             <Alert
-              message={error}
+              title={error}
               type="error"
               showIcon
-              closable
-              onClose={() => setError('')}
+              closable={{
+                onClose: () => setError('')
+              }}
               style={{ marginBottom: '16px' }}
             />
           )}

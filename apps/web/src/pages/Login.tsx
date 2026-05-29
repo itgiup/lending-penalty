@@ -100,7 +100,7 @@ const Login: FC = () => {
 
           {error && (
             <Alert
-              message={error}
+              title={error}
               type="error"
               showIcon
               closable

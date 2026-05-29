@@ -51,7 +51,7 @@ const PaymentForm: FC<PaymentFormProps> = ({ loanId, onSuccess, onCancel }) => {
       >
         {error && (
           <Alert
-            message={error}
+            title={error}
             type="error"
             showIcon
             closable
