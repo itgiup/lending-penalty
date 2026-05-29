@@ -16,7 +16,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  
+
   const [view, setView] = useState('list'); // 'list', 'form', 'detail', 'payment'
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'analytics'
@@ -100,7 +100,6 @@ const Dashboard = () => {
       >
         {/* Header */}
         <Card
-          bordered={false}
           style={{
             maxWidth: '1200px',
             margin: '0 auto 24px',
@@ -108,11 +107,11 @@ const Dashboard = () => {
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)'
           }}
         >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center' 
+          <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
             }}>
               <Title level={2} style={{ margin: 0 }}>
                 🎉 Chào mừng, {user?.name || 'User'}!

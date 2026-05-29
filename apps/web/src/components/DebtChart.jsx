@@ -114,7 +114,7 @@ const DebtChart = () => {
         {/* Pie Chart - Loan Status Distribution */}
         {pieData.length > 0 && (
           <Col xs={24} md={12}>
-            <Card title="📊 Phân Bổ Trạng Thái Khoản Nợ" bordered={false} style={{ borderRadius: '12px' }}>
+            <Card title="📊 Phân Bổ Trạng Thái Khoản Nợ">
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -141,7 +141,7 @@ const DebtChart = () => {
         {/* Bar Chart - Top Loans by Debt */}
         {chartData.length > 0 && (
           <Col xs={24} md={12}>
-            <Card title="💰 Top 10 Khoản Nợ Lớn Nhất" bordered={false} style={{ borderRadius: '12px' }}>
+            <Card title="💰 Top 10 Khoản Nợ Lớn Nhất">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />

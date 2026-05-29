@@ -36,8 +36,6 @@ const PaymentForm = ({ loanId, onSuccess, onCancel }) => {
     >
       <Card
         title="💳 Ghi Nhận Thanh Toán"
-        bordered={false}
-        style={{ borderRadius: '12px' }}
       >
         {error && (
           <Alert

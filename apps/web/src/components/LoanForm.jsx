@@ -65,8 +65,6 @@ const LoanForm = ({ loan, onSuccess, onCancel }) => {
     >
       <Card
         title={isEdit ? '✏️ Chỉnh Sửa Khoản Nợ' : '➕ Thêm Khoản Nợ Mới'}
-        bordered={false}
-        style={{ borderRadius: '12px' }}
       >
         {error && (
           <Alert

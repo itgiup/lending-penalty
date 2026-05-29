@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form, Input, Button, Card, Alert, Typography, Divider } from 'antd';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
 const Register = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(null); // 'google' or 'facebook'
   const [error, setError] = useState('');
   
-  const { register } = useAuth();
+  const { register, loginWithGoogle, loginWithFacebook } = useAuth();
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
@@ -38,6 +39,34 @@ const Register = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setOauthLoading('google');
+    setError('');
+
+    const result = await loginWithGoogle();
+    
+    if (result.success) {
+      navigate('/dashboard', { replace: true });
+    } else {
+      setError(result.error);
+      setOauthLoading(null);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setOauthLoading('facebook');
+    setError('');
+
+    const result = await loginWithFacebook();
+    
+    if (result.success) {
+      navigate('/dashboard', { replace: true });
+    } else {
+      setError(result.error);
+      setOauthLoading(null);
+    }
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -54,7 +83,6 @@ const Register = () => {
         style={{ width: '100%', maxWidth: '450px' }}
       >
         <Card
-          bordered={false}
           style={{
             borderRadius: '12px',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)'
@@ -178,7 +206,39 @@ const Register = () => {
             </Form.Item>
           </Form>
 
-          <Divider>hoặc</Divider>
+          <Divider>hoặc đăng nhập nhanh với</Divider>
+
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+            <Button
+              icon={<GoogleOutlined />}
+              onClick={handleGoogleLogin}
+              loading={oauthLoading === 'google'}
+              block
+              size="large"
+              style={{
+                borderColor: '#DB4437',
+                color: '#DB4437',
+                fontWeight: '500'
+              }}
+            >
+              Google
+            </Button>
+
+            <Button
+              icon={<FacebookOutlined />}
+              onClick={handleFacebookLogin}
+              loading={oauthLoading === 'facebook'}
+              block
+              size="large"
+              style={{
+                borderColor: '#4267B2',
+                color: '#4267B2',
+                fontWeight: '500'
+              }}
+            >
+              Facebook
+            </Button>
+          </div>
 
           <div style={{ textAlign: 'center' }}>
             <Text>Đã có tài khoản? </Text>

@@ -184,7 +184,7 @@ const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '48px' }}>
-        <Spin size="large" tip="Đang tải danh sách khoản nợ..." />
+        <Spin size="large" description="Đang tải danh sách khoản nợ..." />
       </div>
     );
   }
@@ -195,10 +195,7 @@ const LoanList = ({ onAddLoan, onViewLoan, onEditLoan }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card
-        bordered={false}
-        style={{ borderRadius: '12px' }}
-      >
+      <Card>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 

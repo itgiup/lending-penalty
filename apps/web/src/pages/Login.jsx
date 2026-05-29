@@ -49,7 +49,6 @@ const Login = () => {
         style={{ width: '100%', maxWidth: '400px' }}
       >
         <Card
-          bordered={false}
           style={{
             borderRadius: '12px',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)'

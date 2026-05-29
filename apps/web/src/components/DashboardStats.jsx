@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Row, Col, Card, Statistic, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { DollarOutlined, CheckCircleOutlined } from '@ant-design/icons';
@@ -20,7 +20,7 @@ const DashboardStats = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all loans
       const loansRes = await loansAPI.getAll();
       const loans = loansRes.data || [];
@@ -84,43 +84,49 @@ const DashboardStats = () => {
     >
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>💰 Tổng Khoản Nợ</Title>}
               value={stats.totalLoans}
               suffix="khoản"
               loading={loading}
-              valueStyle={{ color: '#1890ff' }}
+              styles={{
+                content: { color: '#1890ff' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>📊 Đang Hoạt Động</Title>}
               value={stats.activeLoans}
               suffix="khoản"
               loading={loading}
-              valueStyle={{ color: '#52c41a' }}
+              styles={{
+                content: { color: '#52c41a' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>⚠️ Quá Hạn</Title>}
               value={stats.overdueLoans}
               suffix="khoản"
               loading={loading}
-              valueStyle={{ color: stats.overdueLoans > 0 ? '#ff4d4f' : '#52c41a' }}
+              styles={{
+                content: { color: stats.overdueLoans > 0 ? '#ff4d4f' : '#52c41a' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>💵 Tổng Dư Nợ</Title>}
               value={stats.totalDebt}
@@ -129,7 +135,9 @@ const DashboardStats = () => {
                 currency: 'VND'
               }).format(value)}
               loading={loading}
-              valueStyle={{ color: '#cf1322', fontSize: '20px' }}
+              styles={{
+                content: { color: '#cf1322', fontSize: '20px' }
+              }}
             />
           </Card>
         </Col>
@@ -137,7 +145,7 @@ const DashboardStats = () => {
 
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
         <Col xs={24} md={12}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>📈 Tổng Gốc Đã Cho Vay</Title>}
               value={stats.totalPrincipal}
@@ -147,13 +155,15 @@ const DashboardStats = () => {
               }).format(value)}
               prefix={<DollarOutlined />}
               loading={loading}
-              valueStyle={{ color: '#722ed1' }}
+              styles={{
+                content: { color: '#722ed1' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} md={12}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title={<Title level={5} style={{ margin: 0 }}>✅ Tổng Đã Thu Hồi</Title>}
               value={stats.totalPaid}
@@ -163,7 +173,9 @@ const DashboardStats = () => {
               }).format(value)}
               prefix={<CheckCircleOutlined />}
               loading={loading}
-              valueStyle={{ color: '#52c41a' }}
+              styles={{
+                content: { color: '#52c41a' }
+              }}
             />
           </Card>
         </Col>

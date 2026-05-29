@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Table, Button, Space, Tag, Typography, Divider, Progress, message } from 'antd';
 import { motion } from 'framer-motion';
 import { ArrowLeftOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -6,7 +6,7 @@ import { loansAPI, paymentsAPI } from '../api/client';
 import { exportPaymentsToExcel } from '../utils/export';
 import dayjs from 'dayjs';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
   const [loan, setLoan] = useState(null);
@@ -21,7 +21,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch loan details
       const loanRes = await loansAPI.getById(loanId);
       setLoan(loanRes.data);
@@ -90,7 +90,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
   };
 
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
-  const paymentProgress = calculation.totalDebt > 0 
+  const paymentProgress = calculation.totalDebt > 0
     ? Math.min(100, (totalPaid / calculation.totalDebt) * 100)
     : 0;
 
@@ -101,7 +101,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
       transition={{ duration: 0.5 }}
     >
       {/* Header */}
-      <Card bordered={false} style={{ marginBottom: '24px', borderRadius: '12px' }}>
+      <Card>
         <Row justify="space-between" align="middle">
           <Col>
             <Button icon={<ArrowLeftOutlined />} onClick={onBack}>
@@ -121,7 +121,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
               >
                 Ghi Nhận Thanh Toán
               </Button>
-              <Button 
+              <Button
                 icon={<DownloadOutlined />}
                 onClick={handleExportPayments}
                 disabled={payments.length === 0}
@@ -134,7 +134,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
       </Card>
 
       {/* Borrower Info */}
-      <Card title="👤 Thông Tin Người Vay" bordered={false} style={{ marginBottom: '24px', borderRadius: '12px' }}>
+      <Card title="👤 Thông Tin Người Vay">
         <Row gutter={16}>
           <Col span={8}>
             <Text strong>Tên:</Text> <Text>{loan.borrower_name}</Text>
@@ -151,7 +151,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
       {/* Statistics Cards */}
       <Row gutter={16} style={{ marginBottom: '24px' }}>
         <Col xs={24} sm={12} md={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title="💰 Gốc"
               value={calculation.principal}
@@ -159,13 +159,15 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: '#1890ff' }}
+              styles={{
+                content: { color: '#1890ff' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} md={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title="📈 Lãi"
               value={calculation.interest}
@@ -173,13 +175,15 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: '#faad14' }}
+              styles={{
+                content: { color: '#faad14' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} md={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title="⚠️ Phạt"
               value={calculation.penalty}
@@ -187,13 +191,15 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: calculation.penalty > 0 ? '#ff4d4f' : '#52c41a' }}
+              styles={{
+                content: { color: calculation.penalty > 0 ? '#ff4d4f' : '#52c41a' }
+              }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} md={6}>
-          <Card bordered={false} style={{ borderRadius: '12px' }}>
+          <Card>
             <Statistic
               title="💵 Tổng Nợ"
               value={calculation.totalDebt}
@@ -201,14 +207,16 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: '#cf1322', fontSize: '24px' }}
+              styles={{
+                content: { color: '#cf1322', fontSize: '24px' }
+              }}
             />
           </Card>
         </Col>
       </Row>
 
       {/* Payment Progress */}
-      <Card title="📊 Tiến Độ Thanh Toán" bordered={false} style={{ marginBottom: '24px', borderRadius: '12px' }}>
+      <Card title="📊 Tiến Độ Thanh Toán">
         <Row gutter={16}>
           <Col span={12}>
             <Statistic
@@ -218,7 +226,9 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: '#52c41a' }}
+              styles={{
+                content: { color: '#52c41a' }
+              }}
             />
           </Col>
           <Col span={12}>
@@ -229,13 +239,15 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
                 style: 'currency',
                 currency: 'VND'
               }).format(value)}
-              valueStyle={{ color: '#ff4d4f' }}
+              styles={{
+                content: { color: '#ff4d4f' }
+              }}
             />
           </Col>
         </Row>
-        
+
         <Divider />
-        
+
         <Progress
           percent={Number(paymentProgress.toFixed(2))}
           strokeColor={{
@@ -248,7 +260,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
       </Card>
 
       {/* Loan Details */}
-      <Card title="📋 Chi Tiết Khoản Nợ" bordered={false} style={{ marginBottom: '24px', borderRadius: '12px' }}>
+      <Card title="📋 Chi Tiết Khoản Nợ">
         <Row gutter={16}>
           <Col span={8}>
             <Text strong>Lãi suất:</Text> <Tag color="blue">{loan.interest_rate}%/năm</Tag>
@@ -278,7 +290,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
 
       {/* Penalty History */}
       {calculation.penaltyLoans && calculation.penaltyLoans.length > 0 && (
-        <Card title="⚠️ Lịch Sử Phạt" bordered={false} style={{ marginBottom: '24px', borderRadius: '12px' }}>
+        <Card title="⚠️ Lịch Sử Phạt">
           <Table
             dataSource={calculation.penaltyLoans}
             rowKey="period"
@@ -323,7 +335,7 @@ const LoanDetail = ({ loanId, onBack, onAddPayment }) => {
       )}
 
       {/* Payment History */}
-      <Card title="💳 Lịch Sử Thanh Toán" bordered={false} style={{ borderRadius: '12px' }}>
+      <Card title="💳 Lịch Sử Thanh Toán">
         {payments.length === 0 ? (
           <Text type="secondary">Chưa có thanh toán nào</Text>
         ) : (

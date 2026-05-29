@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Spin } from 'antd';
@@ -15,7 +14,7 @@ const ProtectedRoute = ({ children }) => {
         alignItems: 'center', 
         minHeight: '100vh' 
       }}>
-        <Spin size="large" tip="Loading..." />
+        <Spin size="large" description="Loading..." />
       </div>
     );
   }

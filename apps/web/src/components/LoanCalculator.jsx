@@ -110,7 +110,6 @@ const LoanCalculator = () => {
       >
         <Card
           title={t('calculator.title')}
-          bordered={false}
           className="calculator-card"
         >
           <Form

@@ -70,6 +70,112 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login with Google OAuth
+  const loginWithGoogle = async () => {
+    try {
+      // For now, simulate OAuth flow
+      // In production, this would redirect to Google OAuth page
+      const mockGoogleUser = {
+        id: `google-${Date.now()}`,
+        email: 'user@gmail.com',
+        name: 'Google User',
+        google_id: '1234567890',
+        created_at: new Date().toISOString()
+      };
+
+      // Try to login via API first
+      const response = await axios.post(`${API_URL}/api/auth/google`, {
+        email: mockGoogleUser.email,
+        name: mockGoogleUser.name,
+        google_id: mockGoogleUser.google_id
+      });
+
+      if (response.data.success) {
+        const userData = response.data.user;
+        const fakeToken = 'temp-token-google-' + Date.now();
+        
+        setUser(userData);
+        setToken(fakeToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', fakeToken);
+        
+        return { success: true, user: userData };
+      }
+    } catch (error) {
+      // If API fails, use mock user for demo
+      console.log('Google OAuth API not ready, using mock user');
+      const mockGoogleUser = {
+        id: `google-${Date.now()}`,
+        email: 'user@gmail.com',
+        name: 'Google User',
+        google_id: '1234567890',
+        created_at: new Date().toISOString()
+      };
+      
+      const fakeToken = 'temp-token-google-' + Date.now();
+      
+      setUser(mockGoogleUser);
+      setToken(fakeToken);
+      localStorage.setItem('user', JSON.stringify(mockGoogleUser));
+      localStorage.setItem('token', fakeToken);
+      
+      return { success: true, user: mockGoogleUser };
+    }
+  };
+
+  // Login with Facebook OAuth
+  const loginWithFacebook = async () => {
+    try {
+      // For now, simulate OAuth flow
+      // In production, this would redirect to Facebook OAuth page
+      const mockFacebookUser = {
+        id: `facebook-${Date.now()}`,
+        email: 'user@facebook.com',
+        name: 'Facebook User',
+        facebook_id: '1234567890',
+        created_at: new Date().toISOString()
+      };
+
+      // Try to login via API first
+      const response = await axios.post(`${API_URL}/api/auth/facebook`, {
+        email: mockFacebookUser.email,
+        name: mockFacebookUser.name,
+        facebook_id: mockFacebookUser.facebook_id
+      });
+
+      if (response.data.success) {
+        const userData = response.data.user;
+        const fakeToken = 'temp-token-facebook-' + Date.now();
+        
+        setUser(userData);
+        setToken(fakeToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', fakeToken);
+        
+        return { success: true, user: userData };
+      }
+    } catch (error) {
+      // If API fails, use mock user for demo
+      console.log('Facebook OAuth API not ready, using mock user');
+      const mockFacebookUser = {
+        id: `facebook-${Date.now()}`,
+        email: 'user@facebook.com',
+        name: 'Facebook User',
+        facebook_id: '1234567890',
+        created_at: new Date().toISOString()
+      };
+      
+      const fakeToken = 'temp-token-facebook-' + Date.now();
+      
+      setUser(mockFacebookUser);
+      setToken(fakeToken);
+      localStorage.setItem('user', JSON.stringify(mockFacebookUser));
+      localStorage.setItem('token', fakeToken);
+      
+      return { success: true, user: mockFacebookUser };
+    }
+  };
+
   // Logout user
   const logout = () => {
     setUser(null);
@@ -97,6 +203,8 @@ export const AuthProvider = ({ children }) => {
     loading: false,
     register,
     login,
+    loginWithGoogle,
+    loginWithFacebook,
     logout,
     updateProfile,
     isAuthenticated: !!user

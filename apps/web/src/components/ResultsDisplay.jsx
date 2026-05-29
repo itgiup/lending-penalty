@@ -10,7 +10,7 @@ const formatCurrency = (value, currency) => {
 
 const ResultsDisplay = ({ loan }) => {
   const { t } = useTranslation();
-  
+
   const {
     principal,
     interest,
@@ -98,7 +98,6 @@ const ResultsDisplay = ({ loan }) => {
       <motion.div variants={itemVariants}>
         <Card
           title={t('results.summary')}
-          bordered={false}
           className="summary-card"
         >
           <Row gutter={16}>
@@ -107,7 +106,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.principal')}
                 value={principal}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: '#1890ff' }}
+                styles={{
+                  content: { color: '#1890ff' }
+                }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
@@ -115,7 +116,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.interest')}
                 value={interest}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: '#faad14' }}
+                styles={{
+                  content: { color: '#faad14' }
+                }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
@@ -123,7 +126,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={isOverdue ? t('results.penalty') : '⚫ ' + t('results.penalty')}
                 value={penalty}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: penalty > 0 ? '#ff4d4f' : '#95de64' }}
+                styles={{
+                  content: { color: penalty > 0 ? '#ff4d4f' : '#95de64' }
+                }}
               />
             </Col>
             <Col xs={24} sm={12} md={6}>
@@ -131,7 +136,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.totalDebt')}
                 value={totalDebt}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: '#f5222d', fontSize: '24px' }}
+                styles={{
+                  content: { color: '#f5222d', fontSize: '24px' }
+                }}
               />
             </Col>
           </Row>
@@ -141,7 +148,6 @@ const ResultsDisplay = ({ loan }) => {
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
           title={t('results.paymentProgress')}
-          bordered={false}
           className="payment-card"
         >
           <Row gutter={16}>
@@ -150,7 +156,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.paidAmount')}
                 value={paidAmount}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: '#52c41a' }}
+                styles={{
+                  content: { color: '#52c41a' }
+                }}
               />
             </Col>
             <Col xs={24} sm={12} md={8}>
@@ -158,7 +166,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.remainingDebt')}
                 value={remainingDebt}
                 formatter={(value) => formatCurrency(value, currency)}
-                valueStyle={{ color: remainingDebt > 0 ? '#ff4d4f' : '#52c41a' }}
+                styles={{
+                  content: { color: remainingDebt > 0 ? '#ff4d4f' : '#52c41a' }
+                }}
               />
             </Col>
             <Col xs={24} sm={12} md={8}>
@@ -166,7 +176,9 @@ const ResultsDisplay = ({ loan }) => {
                 title={t('results.paymentProgress')}
                 value={progressPercent}
                 suffix="%"
-                valueStyle={{ color: progressPercent === 100 ? '#52c41a' : '#faad14' }}
+                styles={{
+                  content: { color: progressPercent === 100 ? '#52c41a' : '#faad14' }
+                }}
               />
             </Col>
           </Row>
@@ -181,7 +193,6 @@ const ResultsDisplay = ({ loan }) => {
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
           title={t('results.termInfo')}
-          bordered={false}
         >
           <Row gutter={16}>
             <Col xs={24} sm={12}>
@@ -217,7 +228,6 @@ const ResultsDisplay = ({ loan }) => {
         <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
           <Card
             title={`${t('results.penaltyHistory')} (${penaltyLoans.length} kỳ)`}
-            bordered={false}
           >
             <Alert
               message={t('results.penaltyHistory')}
@@ -242,7 +252,6 @@ const ResultsDisplay = ({ loan }) => {
       <motion.div variants={itemVariants} style={{ marginTop: 16 }}>
         <Card
           title={t('results.details')}
-          bordered={false}
           className="details-card"
         >
           <div style={{ fontFamily: 'monospace', fontSize: '12px' }}>
