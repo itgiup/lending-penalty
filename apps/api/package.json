@@ -1,0 +1,22 @@
+{
+  "name": "lending-penalty-worker",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Hono backend for lending penalty calculator with auth & D1",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 execute lending_penalty_db --file=schema.sql",
+    "db:shell": "wrangler d1 shell lending_penalty_db"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.0",
+    "bcryptjs": "^2.4.3",
+    "hono": "^4.0.0",
+    "jose": "^5.2.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.95.0"
+  }
+}

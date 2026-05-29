@@ -1,0 +1,114 @@
+.results-display {
+  max-width: 1200px;
+  margin: 24px auto 0;
+}
+
+.summary-card,
+.payment-card,
+.details-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .summary-card,
+[data-theme='dark'] .payment-card,
+[data-theme='dark'] .details-card {
+  background: #1e1e2e;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.summary-card ::deep(.ant-card-head),
+.payment-card ::deep(.ant-card-head),
+.details-card ::deep(.ant-card-head) {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px 12px 0 0;
+  border-bottom: 2px solid #e8eef7;
+}
+
+[data-theme='dark'] .summary-card ::deep(.ant-card-head),
+[data-theme='dark'] .payment-card ::deep(.ant-card-head),
+[data-theme='dark'] .details-card ::deep(.ant-card-head) {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border-bottom: 2px solid #4a5568;
+}
+
+.summary-card ::deep(.ant-card-head-title),
+.payment-card ::deep(.ant-card-head-title),
+.details-card ::deep(.ant-card-head-title) {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+[data-theme='dark'] .summary-card ::deep(.ant-card-head-title),
+[data-theme='dark'] .payment-card ::deep(.ant-card-head-title),
+[data-theme='dark'] .details-card ::deep(.ant-card-head-title) {
+  color: #e2e8f0;
+}
+
+.summary-card ::deep(.ant-statistic-title),
+.payment-card ::deep(.ant-statistic-title) {
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+}
+
+[data-theme='dark'] .summary-card ::deep(.ant-statistic-title),
+[data-theme='dark'] .payment-card ::deep(.ant-statistic-title) {
+  color: #a0aec0;
+}
+
+.summary-card ::deep(.ant-statistic-content),
+.payment-card ::deep(.ant-statistic-content) {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+[data-theme='dark'] .summary-card ::deep(.ant-statistic-content),
+[data-theme='dark'] .payment-card ::deep(.ant-statistic-content) {
+  color: #e2e8f0;
+}
+
+.summary-card ::deep(.ant-progress-outer) {
+  padding: 4px 0;
+}
+
+.payment-card ::deep(.ant-progress-text) {
+  font-weight: 600;
+}
+
+.details-card {
+  background: #fafafa;
+}
+
+[data-theme='dark'] .details-card {
+  background: #252538;
+}
+
+.details-card ::deep(.ant-card-body) {
+  padding: 16px;
+}
+
+.details-card p {
+  margin: 8px 0;
+  line-height: 1.8;
+  color: #262626;
+}
+
+[data-theme='dark'] .details-card p {
+  color: #cbd5e0;
+}
+
+@media (max-width: 768px) {
+  .results-display {
+    margin: 16px 0;
+    padding: 0 12px;
+  }
+
+  .summary-card ::deep(.ant-statistic-content),
+  .payment-card ::deep(.ant-statistic-content) {
+    font-size: 18px;
+  }
+}

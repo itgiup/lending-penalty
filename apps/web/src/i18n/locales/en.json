@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "Lending Calculator",
+    "subtitle": "Loan Interest & Penalty Calculator"
+  },
+  "nav": {
+    "calculator": "Calculator",
+    "loans": "Loans",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful"
+  },
+  "calculator": {
+    "title": "💰 Loan Calculator",
+    "principal": "Loan Amount",
+    "loanDate": "Loan Date",
+    "interestRate": "Interest Rate (/year)",
+    "termMonths": "Term",
+    "penaltyRate": "Penalty Rate (/year)",
+    "borrowerName": "Borrower Name",
+    "borrowerPhone": "Borrower Phone",
+    "borrowerAddress": "Borrower Address",
+    "paidAmount": "Already Paid",
+    "calculate": "🔍 Calculate",
+    "save": "💾 Save Loan"
+  },
+  "results": {
+    "summary": "📊 Loan Summary",
+    "principal": "💵 Principal",
+    "interest": "📈 Interest Accrued",
+    "penalty": "🔴 Penalty",
+    "totalDebt": "💰 Total Debt",
+    "paidAmount": "✅ Already Paid",
+    "remainingDebt": "❌ Remaining Debt",
+    "paymentProgress": "📉 Payment Progress",
+    "termInfo": "📅 Term Information",
+    "penaltyHistory": "🔴 Penalty History",
+    "details": "🎯 Calculation Details",
+    "loanDate": "📍 Loan Date",
+    "dueDate": "📌 Due Date",
+    "overdue": "Overdue",
+    "notOverdue": "Not Overdue",
+    "period": "Period",
+    "base": "Base/Debt",
+    "penaltyAmount": "Penalty Amount",
+    "totalAmount": "Total Amount"
+  },
+  "loans": {
+    "title": "📋 My Loans",
+    "addNew": "➕ Add New Loan",
+    "noBorrower": "No borrower name",
+    "status": "Status",
+    "active": "Active",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "makePayment": "📝 Make Payment",
+    "editLoan": "✏️ Edit",
+    "deleteLoan": "🗑️ Delete",
+    "paymentHistory": "💳 Payment History",
+    "noLoans": "No loans yet"
+  },
+  "payment": {
+    "title": "💳 Record Payment",
+    "amount": "Payment Amount",
+    "date": "Payment Date",
+    "notes": "Notes (optional)",
+    "submit": "Record Payment",
+    "success": "Payment recorded successfully",
+    "error": "Failed to record payment"
+  },
+  "theme": {
+    "light": "☀️ Light",
+    "dark": "🌙 Dark"
+  },
+  "language": {
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "chinese": "中文",
+    "russian": "Русский"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Are you sure?",
+    "currency": "₫"
+  }
+}

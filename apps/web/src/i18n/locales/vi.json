@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "Máy Tính Lãi/Phạt Cho Vay",
+    "subtitle": "Tính Toán Chi Tiết Khoản Vay & Tiền Phạt"
+  },
+  "nav": {
+    "calculator": "Tính Toán",
+    "loans": "Quản Lí Nợ",
+    "profile": "Hồ Sơ",
+    "logout": "Đăng Xuất"
+  },
+  "auth": {
+    "login": "Đăng Nhập",
+    "register": "Đăng Ký",
+    "email": "Email",
+    "password": "Mật Khẩu",
+    "confirmPassword": "Xác Nhận Mật Khẩu",
+    "name": "Họ & Tên",
+    "phone": "Số Điện Thoại",
+    "loginSuccess": "Đăng nhập thành công",
+    "registerSuccess": "Đăng ký thành công"
+  },
+  "calculator": {
+    "title": "🏦 Máy Tính Lãi/Phạt Cho Vay",
+    "principal": "💰 Số Tiền Vay",
+    "loanDate": "📅 Ngày Vay",
+    "interestRate": "📈 Lãi Suất (/năm)",
+    "termMonths": "⏰ Kỳ Hạn",
+    "penaltyRate": "⚠️ Phạt Suất (/năm)",
+    "borrowerName": "Tên Người Mượn",
+    "borrowerPhone": "Số Điện Thoại",
+    "borrowerAddress": "Địa Chỉ",
+    "paidAmount": "✅ Đã Thanh Toán",
+    "calculate": "🔍 Tính Toán",
+    "save": "💾 Lưu Khoản Vay"
+  },
+  "results": {
+    "summary": "📊 Tóm Tắt Khoản Vay",
+    "principal": "💵 Gốc Vay",
+    "interest": "📈 Lãi Tích Lũy",
+    "penalty": "🔴 Tiền Phạt",
+    "totalDebt": "💰 Tổng Nợ",
+    "paidAmount": "✅ Đã Thanh Toán",
+    "remainingDebt": "❌ Còn Nợ",
+    "paymentProgress": "📉 Tỷ Lệ Thanh Toán",
+    "termInfo": "📅 Thông Tin Kỳ Hạn",
+    "penaltyHistory": "🔴 Lịch Sử Phạt",
+    "details": "🎯 Chi Tiết Tính Toán",
+    "loanDate": "📍 Ngày Vay",
+    "dueDate": "📌 Hạn Chót",
+    "overdue": "Quá Hạn",
+    "notOverdue": "Chưa Đến Hạn",
+    "period": "Kỳ",
+    "base": "Gốc/Nợ",
+    "penaltyAmount": "Tiền Phạt",
+    "totalAmount": "Tổng Cộng"
+  },
+  "loans": {
+    "title": "📋 Quản Lí Nợ",
+    "addNew": "➕ Thêm Khoản Vay Mới",
+    "noBorrower": "Chưa nhập tên",
+    "status": "Trạng Thái",
+    "active": "Đang Nợ",
+    "paid": "Đã Trả",
+    "overdue": "Quá Hạn",
+    "makePayment": "📝 Nhập Thanh Toán",
+    "editLoan": "✏️ Sửa",
+    "deleteLoan": "🗑️ Xóa",
+    "paymentHistory": "💳 Lịch Sử Thanh Toán",
+    "noLoans": "Chưa có khoản vay"
+  },
+  "payment": {
+    "title": "💳 Ghi Nhận Thanh Toán",
+    "amount": "Số Tiền Thanh Toán",
+    "date": "Ngày Thanh Toán",
+    "notes": "Ghi Chú (Tùy Chọn)",
+    "submit": "Ghi Nhận Thanh Toán",
+    "success": "Ghi nhận thanh toán thành công",
+    "error": "Ghi nhận thanh toán thất bại"
+  },
+  "theme": {
+    "light": "☀️ Sáng",
+    "dark": "🌙 Tối"
+  },
+  "language": {
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "chinese": "中文",
+    "russian": "Русский"
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "close": "Đóng",
+    "loading": "Đang Tải...",
+    "error": "Lỗi",
+    "success": "Thành Công",
+    "confirm": "Bạn có chắc chắn?",
+    "currency": "₫"
+  }
+}
