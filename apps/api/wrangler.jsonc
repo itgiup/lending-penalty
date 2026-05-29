@@ -2,6 +2,18 @@
   "name": "lending-penalty-worker",
   "main": "src/index.ts",
   "compatibility_date": "2024-01-15",
+  
+  // ============================================
+  // OAUTH CREDENTIALS (Local Development)
+  // For production, set these in Cloudflare Dashboard → Settings → Variables
+  // ============================================
+  "vars": {
+    "GOOGLE_CLIENT_ID": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_SECRET": "YOUR_GOOGLE_CLIENT_SECRET_HERE",
+    "FACEBOOK_APP_ID": "YOUR_FACEBOOK_APP_ID",
+    "FACEBOOK_APP_SECRET": "YOUR_FACEBOOK_APP_SECRET_HERE"
+  },
+  
   "env": {
     "production": {
       "name": "lending-penalty-worker-prod",

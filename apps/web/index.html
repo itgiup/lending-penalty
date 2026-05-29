@@ -4,7 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>lending-penalty</title>
+    <title>Lending Penalty - Quản Lý Khoản Nợ</title>
+    
+    <!-- Facebook SDK for OAuth -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId: '%VITE_FACEBOOK_APP_ID%',
+          cookie: true,
+          xfbml: true,
+          version: 'v18.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
   </head>
   <body>
     <div id="root"></div>

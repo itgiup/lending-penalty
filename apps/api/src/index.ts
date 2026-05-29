@@ -2,11 +2,30 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
+import { OAuth2Client } from 'google-auth-library';
 
 const app = new Hono();
 
 // Enable CORS
 app.use('*', cors());
+
+// ============================================
+// OAUTH CONFIGURATION
+// ============================================
+
+// Google OAuth Client
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+
+const googleOAuthClient = new OAuth2Client(
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  'http://localhost:8787/oauth/callback/google'
+);
+
+// Facebook OAuth (will use Graph API directly)
+const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || '';
+const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET || '';
 
 // ============================================
 // DATABASE HELPER FUNCTIONS
@@ -249,6 +268,135 @@ app.post('/api/auth/login', zValidator('json', loginSchema), async (c) => {
     });
   } catch (error) {
     return c.json({ error: 'Login failed', message: error.message }, 500);
+  }
+});
+
+// ============================================
+// OAUTH ENDPOINTS
+// ============================================
+
+// Google OAuth Login/Register
+app.post('/api/auth/google', async (c) => {
+  try {
+    const db = c.env.DB;
+    const { credential } = await c.req.json(); // Google ID token from frontend
+
+    if (!credential) {
+      return c.json({ error: 'Missing credential' }, 400);
+    }
+
+    // Verify Google token
+    const ticket = await googleOAuthClient.verifyIdToken({
+      idToken: credential,
+      audience: GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return c.json({ error: 'Invalid token' }, 401);
+    }
+
+    const google_id = payload.sub;
+    const email = payload.email;
+    const name = payload.name;
+    const picture = payload.picture;
+
+    // Find or create user
+    let user = await db.prepare(
+      'SELECT id, email, name, phone, google_id FROM users WHERE google_id = ? OR email = ?'
+    ).bind(google_id, email).first();
+
+    if (!user) {
+      // Create new user
+      const id = generateId();
+      await db.prepare(
+        'INSERT INTO users (id, email, name, phone, google_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))'
+      ).bind(id, email, name, null, google_id).run();
+
+      user = { id, email, name, phone: null };
+    } else if (!user.google_id) {
+      // Link Google account to existing user
+      await db.prepare(
+        'UPDATE users SET google_id = ?, updated_at = datetime("now") WHERE id = ?'
+      ).bind(google_id, user.id).run();
+    }
+
+    return c.json({
+      success: true,
+      message: 'Google login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        google_id: google_id,
+        picture: picture
+      }
+    });
+  } catch (error) {
+    console.error('Google OAuth error:', error);
+    return c.json({ error: 'Google login failed', message: error.message }, 500);
+  }
+});
+
+// Facebook OAuth Login/Register
+app.post('/api/auth/facebook', async (c) => {
+  try {
+    const db = c.env.DB;
+    const { accessToken, userID } = await c.req.json();
+
+    if (!accessToken || !userID) {
+      return c.json({ error: 'Missing access token or user ID' }, 400);
+    }
+
+    // Verify Facebook token and get user info
+    const response = await fetch(`https://graph.facebook.com/me?fields=id,email,name,picture&access_token=${accessToken}`);
+    
+    if (!response.ok) {
+      return c.json({ error: 'Invalid Facebook token' }, 401);
+    }
+
+    const fbUser = await response.json();
+    const facebook_id = fbUser.id;
+    const email = fbUser.email || `${facebook_id}@facebook.com`;
+    const name = fbUser.name;
+    const picture = fbUser.picture?.data?.url;
+
+    // Find or create user
+    let user = await db.prepare(
+      'SELECT id, email, name, phone, facebook_id FROM users WHERE facebook_id = ? OR email = ?'
+    ).bind(facebook_id, email).first();
+
+    if (!user) {
+      // Create new user
+      const id = generateId();
+      await db.prepare(
+        'INSERT INTO users (id, email, name, phone, facebook_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))'
+      ).bind(id, email, name, null, facebook_id).run();
+
+      user = { id, email, name, phone: null };
+    } else if (!user.facebook_id) {
+      // Link Facebook account to existing user
+      await db.prepare(
+        'UPDATE users SET facebook_id = ?, updated_at = datetime("now") WHERE id = ?'
+      ).bind(facebook_id, user.id).run();
+    }
+
+    return c.json({
+      success: true,
+      message: 'Facebook login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        facebook_id: facebook_id,
+        picture: picture
+      }
+    });
+  } catch (error) {
+    console.error('Facebook OAuth error:', error);
+    return c.json({ error: 'Facebook login failed', message: error.message }, 500);
   }
 });
 
