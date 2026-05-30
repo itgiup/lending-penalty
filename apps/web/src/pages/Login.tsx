@@ -18,7 +18,7 @@ const Login: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | 'facebook' | null>(null);
   const [error, setError] = useState<string>('');
-  
+
   const { login, loginWithFacebook } = useAuth();
   const { login: googleLogin } = useGoogleOAuth(); // Real Google OAuth hook
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ const Login: FC = () => {
     setError('');
 
     const result = await loginWithFacebook();
-    
+
     if (result.success) {
       navigate(from, { replace: true });
     } else {
@@ -103,8 +103,9 @@ const Login: FC = () => {
               title={error}
               type="error"
               showIcon
-              closable
-              onClose={() => setError('')}
+              closable={{
+                onClose: () => setError('')
+              }}
               style={{ marginBottom: '16px' }}
             />
           )}
@@ -160,42 +161,38 @@ const Login: FC = () => {
 
           <Divider>hoặc</Divider>
 
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
             <Button
-              type="default"
               icon={<GoogleOutlined />}
               onClick={handleGoogleLogin}
               loading={oauthLoading === 'google'}
+              block
+              size="large"
               style={{
-                width: '48%',
-                marginRight: '4%',
-                height: '45px',
-                fontSize: '16px',
-                fontWeight: '600',
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                backgroundColor: '#fff'
+                borderColor: '#DB4437',
+                color: '#DB4437',
+                fontWeight: '500',
+                backgroundColor: 'transparent'
               }}
             >
-              Đăng nhập với Google
+              Google
             </Button>
-            <Button
-              type="default"
+
+            {/* <Button
               icon={<FacebookOutlined />}
               onClick={handleFacebookLogin}
               loading={oauthLoading === 'facebook'}
+              block
+              size="large"
               style={{
-                width: '48%',
-                height: '45px',
-                fontSize: '16px',
-                fontWeight: '600',
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                backgroundColor: '#fff'
+                borderColor: '#4267B2',
+                color: '#4267B2',
+                fontWeight: '500',
+                backgroundColor: 'transparent'
               }}
             >
-              Đăng nhập với Facebook
-            </Button>
+              Facebook
+            </Button> */}
           </div>
 
           <div style={{ textAlign: 'center' }}>

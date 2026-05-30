@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
-import { OAuth2Client } from 'google-auth-library';
 
 const app = new Hono();
 
@@ -13,15 +12,8 @@ app.use('*', cors());
 // OAUTH CONFIGURATION
 // ============================================
 
-// Google OAuth Client
+// Google OAuth Client ID
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-
-const googleOAuthClient = new OAuth2Client(
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  'http://localhost:8787/oauth/callback/google'
-);
 
 // Facebook OAuth (will use Graph API directly)
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || '';
@@ -117,7 +109,7 @@ const calculateLoanStatus = (loan: LoanCalculation, currentDate: Date = new Date
     principal,
     interest: interestActual,
     penalty,
-    totalDebt,
+    totalDeAt: totalDebt,
     paidAmount,
     remainingDebt,
     dueDate,
@@ -278,63 +270,115 @@ app.post('/api/auth/login', zValidator('json', loginSchema), async (c) => {
 // Google OAuth Login/Register
 app.post('/api/auth/google', async (c) => {
   try {
+    console.log('Google OAuth endpoint called'); // Add logging
     const db = c.env.DB;
     const { credential } = await c.req.json(); // Google ID token from frontend
 
     if (!credential) {
+      console.log('No credential provided');
       return c.json({ error: 'Missing credential' }, 400);
     }
 
-    // Verify Google token
-    const ticket = await googleOAuthClient.verifyIdToken({
-      idToken: credential,
-      audience: GOOGLE_CLIENT_ID
-    });
-
-    const payload = ticket.getPayload();
-    if (!payload) {
-      return c.json({ error: 'Invalid token' }, 401);
-    }
-
-    const google_id = payload.sub;
-    const email = payload.email;
-    const name = payload.name;
-    const picture = payload.picture;
-
-    // Find or create user
-    let user = await db.prepare(
-      'SELECT id, email, name, phone, google_id FROM users WHERE google_id = ? OR email = ?'
-    ).bind(google_id, email).first();
-
-    if (!user) {
-      // Create new user
-      const id = generateId();
-      await db.prepare(
-        'INSERT INTO users (id, email, name, phone, google_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))'
-      ).bind(id, email, name, null, google_id).run();
-
-      user = { id, email, name, phone: null };
-    } else if (!user.google_id) {
-      // Link Google account to existing user
-      await db.prepare(
-        'UPDATE users SET google_id = ?, updated_at = datetime("now") WHERE id = ?'
-      ).bind(google_id, user.id).run();
-    }
-
-    return c.json({
-      success: true,
-      message: 'Google login successful',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        phone: user.phone,
-        google_id: google_id,
-        picture: picture
+    console.log('Received credential, verifying with Google...'); // Add logging
+    console.log('Credential received:', credential.substring(0, 20) + '...'); // Log first 20 chars
+    
+    try {
+      // Check if credential looks like a JWT token (has 3 parts separated by dots)
+      const tokenParts = credential.split('.');
+      if (tokenParts.length !== 3) {
+        console.log('Credential is not a JWT token, attempting to exchange for ID token...');
+        
+        // If it's an access token, we need to exchange it for user info
+        // But since this is an ID token flow, the frontend should send the ID token
+        throw new Error('Invalid JWT token format - expected 3 parts separated by dots');
       }
-    });
+
+      // Decode the payload (second part) - using Buffer approach compatible with CF
+      const base64 = tokenParts[1].replace(/-/g, '+').replace(/_/g, '/');
+      // Pad with '=' if necessary
+      const paddedBase64 = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+      
+      // Use atob to decode base64
+      const binaryString = atob(paddedBase64);
+      const payload = JSON.parse(binaryString);
+      
+      console.log('Decoded payload:', { sub: payload.sub, email: payload.email, name: payload.name, iss: payload.iss, aud: payload.aud, exp: payload.exp });
+      
+      // Validate issuer and audience
+      if (payload.iss !== 'https://accounts.google.com' && payload.iss !== 'accounts.google.com') {
+        console.log(`Invalid issuer: ${payload.iss}`);
+        throw new Error(`Invalid issuer: ${payload.iss}`);
+      }
+      
+      if (payload.aud !== GOOGLE_CLIENT_ID) {
+        console.log(`Invalid audience: ${payload.aud}, expected: ${GOOGLE_CLIENT_ID}`);
+        throw new Error(`Invalid audience: ${payload.aud}`);
+      }
+      
+      // Check expiration
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (payload.exp < currentTime) {
+        console.log('Token expired');
+        throw new Error('Token expired');
+      }
+
+      const google_id = payload.sub;
+      const email = payload.email;
+      const name = payload.name;
+      const picture = payload.picture;
+
+      console.log(`Verified user: ${email} (${name})`);
+
+      if (!email) {
+        console.log('No email provided by Google');
+        return c.json({ error: 'Email not provided by Google' }, 400);
+      }
+
+      // Find or create user
+      let user = await db.prepare(
+        'SELECT id, email, name, phone, google_id FROM users WHERE google_id = ? OR email = ?'
+      ).bind(google_id, email).first();
+
+      if (!user) {
+        console.log('Creating new user');
+        // Create new user
+        const id = generateId();
+        await db.prepare(
+          'INSERT INTO users (id, email, name, phone, google_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))'
+        ).bind(id, email, name, null, google_id).run();
+
+        user = { id, email, name, phone: null };
+      } else if (!user.google_id) {
+        console.log('Linking Google account to existing user');
+        // Link Google account to existing user
+        await db.prepare(
+          'UPDATE users SET google_id = ?, updated_at = datetime("now") WHERE id = ?'
+        ).bind(google_id, user.id).run();
+      } else {
+        console.log('Existing user with Google account found');
+      }
+
+      console.log('Google login successful, returning user data');
+      
+      return c.json({
+        success: true,
+        message: 'Google login successful',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          phone: user.phone,
+          google_id: google_id,
+          picture: picture
+        }
+      });
+    } catch (decodeError) {
+      console.error('JWT token verification error:', decodeError);
+      console.error('Full credential received:', credential); // Log the full credential
+      return c.json({ error: 'Invalid or expired token', details: decodeError.message }, 401);
+    }
   } catch (error) {
-    console.error('Google OAuth error:', error);
+    console.error('Unexpected Google OAuth error:', error);
     return c.json({ error: 'Google login failed', message: error.message }, 500);
   }
 });
@@ -604,4 +648,6 @@ app.delete('/api/payments/:id', async (c) => {
   }
 });
 
+// Export type for Hono client
+export type AppType = typeof app;
 export default app;

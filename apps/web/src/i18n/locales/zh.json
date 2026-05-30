@@ -1,11 +1,11 @@
 {
   "app": {
     "title": "贷款计算器",
-    "subtitle": "贷款利息与罚款计算器"
+    "subtitle": "贷款利息和罚金计算器"
   },
   "nav": {
     "calculator": "计算器",
-    "loans": "贷款管理",
+    "loans": "贷款",
     "profile": "个人资料",
     "logout": "登出"
   },
@@ -24,13 +24,20 @@
     "title": "💰 贷款计算器",
     "principal": "贷款金额",
     "loanDate": "贷款日期",
-    "interestRate": "利率 (年率)",
+    "interestRate": "利率(/年)",
     "termMonths": "期限",
-    "penaltyRate": "罚款率 (年率)",
-    "borrowerName": "借款人名称",
-    "borrowerPhone": "电话号码",
-    "borrowerAddress": "地址",
-    "paidAmount": "已支付金额",
+    "term": "期限长度",
+    "termUnit": "期限单位",
+    "days": "天",
+    "weeks": "周",
+    "months": "月",
+    "quarters": "季度",
+    "years": "年",
+    "penaltyRate": "延期付款罚金(/年)",
+    "borrowerName": "借款人姓名",
+    "borrowerPhone": "借款人电话",
+    "borrowerAddress": "借款人地址",
+    "paidAmount": "已支付",
     "calculate": "🔍 计算",
     "save": "💾 保存贷款"
   },

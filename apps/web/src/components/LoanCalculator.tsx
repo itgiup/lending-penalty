@@ -8,9 +8,9 @@ import {
   DatePicker,
   Space,
   InputNumber,
-  Tooltip,
   Select,
-  Switch
+  Switch,
+  Typography,
 } from 'antd';
 import { motion } from 'framer-motion';
 import dayjs, { Dayjs } from 'dayjs';
@@ -23,7 +23,7 @@ import ResultsDisplay from './ResultsDisplay';
 import { UserOutlined, DashboardOutlined } from '@ant-design/icons';
 import './LoanCalculator.css';
 
-const { Option } = Select;
+const { Text } = Typography;
 
 interface CalculatorFormValues {
   principal: number;
@@ -42,15 +42,38 @@ const LoanCalculator: FC = () => {
   const [loanData, setLoanData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const onFinish = (values: CalculatorFormValues): void => {
+  const onFinish = (values: any): void => {
     setLoading(true);
     setTimeout(() => {
+      // Convert term to months based on selected unit
+      let termInMonths = values.termValue;
+
+      switch (values.termUnit) {
+        case 'days':
+          termInMonths = values.termValue / 30; // Approximate 30 days per month
+          break;
+        case 'weeks':
+          termInMonths = values.termValue / 4.33; // Approximate 4.33 weeks per month
+          break;
+        case 'months':
+          termInMonths = values.termValue;
+          break;
+        case 'quarters':
+          termInMonths = values.termValue * 3; // 3 months per quarter
+          break;
+        case 'years':
+          termInMonths = values.termValue * 12; // 12 months per year
+          break;
+        default:
+          termInMonths = values.termValue;
+      }
+
       const loan: LoanCalculationInput = {
         principal: values.principal,
         interestRate: values.interestRate / 100,
         penaltyRate: values.penaltyRate / 100,
         startDate: values.startDate.toDate(),
-        termMonths: values.termMonths,
+        termMonths: termInMonths,
         paidAmount: values.paidAmount || 0
       };
 
@@ -80,12 +103,13 @@ const LoanCalculator: FC = () => {
             onChange={changeLanguage}
             style={{ width: 140 }}
             size="large"
-          >
-            <Option value="vi">🇻🇳 Tiếng Việt</Option>
-            <Option value="en">🇬🇧 English</Option>
-            <Option value="zh">🇨🇳 中文</Option>
-            <Option value="ru">🇷🇺 Русский</Option>
-          </Select>
+            options={[
+              { value: 'vi', label: '🇻🇳 Tiếng Việt' },
+              { value: 'en', label: '🇬🇧 English' },
+              { value: 'zh', label: '🇨🇳 中文' },
+              { value: 'ru', label: '🇷🇺 Русский' }
+            ]}
+          />
 
           <Space>
             {isAuthenticated ? (
@@ -127,14 +151,15 @@ const LoanCalculator: FC = () => {
             onFinish={onFinish}
             initialValues={{
               principal: 1000000,
-              interestRate: 20,
+              interestRate: 0,
               penaltyRate: 40,
               startDate: dayjs('2022-01-01'),
-              termMonths: 12,
+              termValue: 12,
+              termUnit: 'months',
               paidAmount: 0
             }}
           >
-            <Row gutter={16}>
+            <Row gutter={[32, 32]} style={{ textAlign: 'start' }}>
               <Col xs={24} sm={12}>
                 <Form.Item
                   label={t('calculator.principal')}
@@ -163,55 +188,67 @@ const LoanCalculator: FC = () => {
               </Col>
 
               <Col xs={24} sm={12}>
-                <Tooltip title={t('calculator.interestRate')}>
-                  <Form.Item
-                    label={t('calculator.interestRate')}
-                    name="interestRate"
-                    rules={[{ required: true }]}
-                  >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      step={0.1}
-                      addonAfter="%"
-                      changeOnWheel
-                    />
-                  </Form.Item>
-                </Tooltip>
+                <Form.Item
+                  label={t('calculator.interestRate')}
+                  name="interestRate"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    min={0}
+                    max={100}
+                    step={0.1}
+                    changeOnWheel
+                    suffix="%"
+                  />
+                </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label={t('calculator.termMonths')}
-                  name="termMonths"
+                  label={t('calculator.penaltyRate')}
+                  name="penaltyRate"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    min={0}
+                    max={100}
+                    step={0.1}
+                    changeOnWheel
+                    suffix="%"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label={t('calculator.term')}
+                  name="termValue"
                   rules={[{ required: true }]}
                 >
                   <InputNumber
                     min={1}
                     max={360}
                     step={1}
-                    addonAfter={t('calculator.termMonths')}
                     changeOnWheel
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Tooltip title={t('calculator.penaltyRate')}>
-                  <Form.Item
-                    label={t('calculator.penaltyRate')}
-                    name="penaltyRate"
-                    rules={[{ required: true }]}
-                  >
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      step={0.1}
-                      addonAfter="%"
-                      changeOnWheel
-                    />
-                  </Form.Item>
-                </Tooltip>
+                <Form.Item
+                  label={t('calculator.termUnit')}
+                  name="termUnit"
+                >
+                  <Select
+                    options={[
+                      { value: 'days', label: t('calculator.days') },
+                      { value: 'weeks', label: t('calculator.weeks') },
+                      { value: 'months', label: t('calculator.months') },
+                      { value: 'quarters', label: t('calculator.quarters') },
+                      { value: 'years', label: t('calculator.years') },
+                    ]}
+                  />
+                </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>

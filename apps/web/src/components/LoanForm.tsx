@@ -1,3 +1,4 @@
+import { FC, useEffect, useState } from 'react';
 import { Form, Input, InputNumber, DatePicker, Button, Card, Row, Col, Alert, Space, FormInstance } from 'antd';
 import { motion } from 'framer-motion';
 import { Loan } from '@lending-penalty/shared';
@@ -89,8 +90,9 @@ const LoanForm: FC<LoanFormProps> = ({ loan, onSuccess, onCancel }) => {
             title={error}
             type="error"
             showIcon
-            closable
-            onClose={() => setError('')}
+            closable={{
+              onClose: () => setError('')
+            }}
             style={{ marginBottom: '16px' }}
           />
         )}

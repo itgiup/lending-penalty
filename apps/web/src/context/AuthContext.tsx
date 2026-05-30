@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import axios, { AxiosResponse } from 'axios';
-import { User } from '@lending-penalty/shared';
+import { authAPI } from '../api/client';
+import { API_BASE_URL, User } from '@lending-penalty/shared';
 
 // Type definitions
 interface AuthContextType {
@@ -30,8 +30,9 @@ interface OAuthEventDetail {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+console.log(import.meta);
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_URL = import.meta.env.VITE_API_URL || API_BASE_URL;
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID || '';
 
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Initialize state from localStorage
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
-    
+
     if (storedUser && storedToken) {
       try {
         return JSON.parse(storedUser) as User;
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     return null;
   });
-  
+
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem('token');
   });
@@ -64,13 +65,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const handleOAuthLoginSuccess = (event: CustomEvent<OAuthEventDetail>) => {
       const { user, token, provider } = event.detail;
       console.log(`OAuth login success from ${provider}:`, user);
-      
+
       setUser(user);
       setToken(token);
     };
 
     window.addEventListener('oauth-login-success', handleOAuthLoginSuccess as EventListener);
-    
+
     return () => {
       window.removeEventListener('oauth-login-success', handleOAuthLoginSuccess as EventListener);
     };
@@ -79,22 +80,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Register new user
   const register = async (email: string, password: string, name: string, phone?: string): Promise<AuthResult> => {
     try {
-      const response: AxiosResponse<{ success: boolean; user: User }> = await axios.post(`${API_URL}/api/auth/register`, {
-        email,
-        password,
-        name,
-        phone
+      const response = await authAPI.register({
+        json: {
+          email,
+          password,
+          name,
+          phone
+        }
       });
 
-      if (response.data.success) {
-        return { success: true, user: response.data.user };
+      const data = await response.json();
+
+      if (data.success) {
+        return { success: true, user: data.user };
       }
       return { success: false, error: 'Registration failed' };
     } catch (error) {
       const err = error as any;
-      return { 
-        success: false, 
-        error: err.response?.data?.error || 'Registration failed' 
+      return {
+        success: false,
+        error: err.message || 'Registration failed'
       };
     }
   };
@@ -102,143 +107,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Login user
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      const response: AxiosResponse<{ success: boolean; user: User }> = await axios.post(`${API_URL}/api/auth/login`, {
-        email,
-        password
+      const response = await authAPI.login({
+        json: {
+          email,
+          password
+        }
       });
 
-      if (response.data.success) {
-        const userData: User = response.data.user;
+      const data = await response.json();
+
+      if (data.success) {
+        const userData: User = data.user;
         // TODO: Store JWT token when implemented
         const fakeToken = 'temp-token-' + Date.now();
-        
+
         setUser(userData);
         setToken(fakeToken);
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', fakeToken);
-        
+
         return { success: true, user: userData };
       }
       return { success: false, error: 'Login failed' };
     } catch (error) {
       const err = error as any;
-      return { 
-        success: false, 
-        error: err.response?.data?.error || 'Login failed' 
+      return {
+        success: false,
+        error: err.message || 'Login failed'
       };
     }
   };
 
   // Login with Google OAuth (Demo mode due to hook limitation in context)
   const loginWithGoogle = async (): Promise<AuthResult> => {
-    try {
-      if (!GOOGLE_CLIENT_ID) {
-        console.warn('Google Client ID not configured. Using demo mode.');
-      } else {
-        console.log('Google Client ID configured, but using demo mode due to hook limitation in context.');
-      }
-      
-      // Fallback to demo mode
-      return await mockGoogleLogin();
-    } catch (error) {
-      console.error('Google OAuth error:', error);
-      return await mockGoogleLogin();
-    }
+   
   };
 
-  // Mock Google Login (Fallback)
-  const mockGoogleLogin = async (): Promise<AuthResult> => {
-    const mockGoogleUser: User = {
-      id: `google-${Date.now()}`,
-      email: 'user@gmail.com',
-      name: 'Google User',
-      google_id: '1234567890',
-      created_at: new Date().toISOString()
-    };
-    
-    const fakeToken = 'temp-token-google-' + Date.now();
-    
-    setUser(mockGoogleUser);
-    setToken(fakeToken);
-    localStorage.setItem('user', JSON.stringify(mockGoogleUser));
-    localStorage.setItem('token', fakeToken);
-    
-    return { success: true, user: mockGoogleUser };
-  };
 
   // Login with Facebook OAuth (Real Implementation)
   const loginWithFacebook = async (): Promise<AuthResult> => {
-    try {
-      if (!FACEBOOK_APP_ID) {
-        console.warn('Facebook App ID not configured. Using demo mode.');
-        return await mockFacebookLogin();
-      }
-
-      // Check if FB SDK is loaded
-      if (!(window as any).FB) {
-        console.error('Facebook SDK not loaded');
-        return await mockFacebookLogin();
-      }
-
-      // Use Facebook SDK to login
-      (window as any).FB.login(async (response: any) => {
-        if (response.authResponse) {
-          try {
-            // Send access token to backend for verification
-            const result: AxiosResponse<{ success: boolean; user: User }> = await axios.post(`${API_URL}/api/auth/facebook`, {
-              accessToken: response.authResponse.accessToken,
-              userID: response.authResponse.userID
-            });
-
-            if (result.data.success) {
-              const userData: User = result.data.user;
-              const fakeToken = 'temp-token-facebook-' + Date.now();
-              
-              setUser(userData);
-              setToken(fakeToken);
-              localStorage.setItem('user', JSON.stringify(userData));
-              localStorage.setItem('token', fakeToken);
-              
-              alert('Facebook login successful!');
-            } else {
-              throw new Error(result.data.error || 'Facebook login failed');
-            }
-          } catch (error) {
-            console.error('Facebook OAuth error:', error);
-            alert('Facebook login failed: ' + (error instanceof Error ? error.message : String(error)));
-          }
-        } else {
-          console.error('User cancelled Facebook login or error occurred');
-          alert('Facebook login cancelled');
-        }
-      }, { scope: 'email,public_profile' });
-      
-      return { success: true, message: 'Opening Facebook login...' };
-    } catch (error) {
-      console.error('Facebook OAuth setup error:', error);
-      return await mockFacebookLogin();
-    }
+    throw new Error('Not implemented');
   };
 
-  // Mock Facebook Login (Fallback)
-  const mockFacebookLogin = async (): Promise<AuthResult> => {
-    const mockFacebookUser: User = {
-      id: `facebook-${Date.now()}`,
-      email: 'user@facebook.com',
-      name: 'Facebook User',
-      facebook_id: '1234567890',
-      created_at: new Date().toISOString()
-    };
-    
-    const fakeToken = 'temp-token-facebook-' + Date.now();
-    
-    setUser(mockFacebookUser);
-    setToken(fakeToken);
-    localStorage.setItem('user', JSON.stringify(mockFacebookUser));
-    localStorage.setItem('token', fakeToken);
-    
-    return { success: true, user: mockFacebookUser };
-  };
 
   // Logout user
   const logout = (): void => {
